@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import Appointment from "./Components/AppointmentBooking";
+import LoginComponent from "./Components/LoginComponent";
 
-function App() {
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NavBarComponent from "./Components/NavBarComponent";
+import axios from "axios";
+import MyAppointments from "./Components/MyAppointments";
+import { useRef, useState } from "react";
+
+export default function App() {
+  const httpRequest = useRef(
+    axios.create({
+      baseURL: "http://localhost:5000",
+      withCredentials: true,
+    })
+  );
+  const [loggedIn, setLoggedIn] = useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <NavBarComponent httpRequest={httpRequest.current} />
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <LoginComponent
+              setLoggedIn={setLoggedIn}
+              httpRequest={httpRequest.current}
+            />
+          }
+        ></Route>
+        <Route
+          path="/bookAppointment"
+          element={<Appointment httpRequest={httpRequest.current} />}
+        ></Route>
+        <Route
+          path="/myAppointments"
+          element={<MyAppointments httpRequest={httpRequest.current} />}
+        ></Route>
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
